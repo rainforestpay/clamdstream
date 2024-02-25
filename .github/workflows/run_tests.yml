@@ -1,0 +1,21 @@
+name: Run Tests
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container: golang:1.22
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          go install github.com/jstemmer/go-junit-report@latest
+      - name: Test
+        run: go test -v ./... | go-junit-report -set-exit-code > report.xml
+      - name: Upload go test results
+        uses: test-summary/action@v2
+        with:
+          paths: report.xml
+        if: always()
+
+
